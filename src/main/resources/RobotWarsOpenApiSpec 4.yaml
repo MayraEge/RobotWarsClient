@@ -1,0 +1,541 @@
+openapi: 3.0.3
+info:
+  title: Robot Wars API
+  description: Eine Api für das Spiel Robot Wars
+  version: 1.0.0
+servers:
+  - url: "https://eumth8x973.execute-api.eu-central-1.amazonaws.com/prod/"
+paths:
+  /api/robots:
+    get:
+      summary: Liste von Robotern
+      description: Liefert eine liste von allen Robotern
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: "#/components/schemas/Robot"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getRobotsFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/robots/robot/{id}:
+    get:
+      summary: Bestimmter Roboter
+      description: Liefert einen Roboter mit der ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Roboters.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Robot"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getRobotFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games:
+    get:
+      summary: Liste von Spielen
+      description: Liefert von allen Spielen
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getGamesFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+
+  /api/games/game/{id}:
+    get:
+      summary: Bestimmtes Spiel
+      description: Liefert ein Spiel mit der ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Spiel.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getGameFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/maps:
+    get:
+      summary: Karten
+      description: Liefert alle vorhandenen Karten
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Map"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getMapsFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/maps/map/{id}:
+    get:
+      summary: Bestimmte Karte
+      description: Liefert alle vorhandenen Karten
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID der Karte.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Erfolgreiche Antwort.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Map"
+        "500":
+          description: Interner Serverfehler.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getMapFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games/game/{id}/move/{moveId}/after:
+    get:
+      summary: Alle Bewegungen
+      description: Liefert eine Liste aller Bewegungen nach der Bewegung die in der MoveID beschreiben ist, im einem bestimmten Spiel.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Spiels.
+          schema:
+            type: string
+        - name: moveId
+          in: path
+          required: true
+          description: Die ID des Spiels.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Move"
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getMovesAfterFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/robots/robot:
+    post:
+      summary: Einen neuen Roboter erstellen
+      description: Erstellt einen neuen Roboter mit den bereitgestellten Daten.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewRobot"
+      responses:
+        "201":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Robot"
+        "400":
+          description: Ungültige Anfrage.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{postRobotFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games/game:
+    post:
+      summary: Einen neues Spiel erstellen
+      description: Erstellt ein neues Spielt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewGame"
+      responses:
+        "201":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          description: Ungültige Anfrage.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{postGameFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games/game/{id}/join:
+    post:
+      summary: Spiel beitreten
+      description: Einen bestehenden Spiel beitreten
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Spiels.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinGame"
+      responses:
+        "201":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JoinGameResponse"
+        "400":
+          description: Ungültige Anfrage.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{postJoinGameFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games/game/{id}/move:
+    get:
+      summary: Alle Bewegungen
+      description: Liefert eine Liste aller Bewegungen im einem bestimmten Spiel.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Spiels.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Move"
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{getMovesFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+  /api/games/game/{id}/move/player/{playerId}:
+    post:
+      summary: Einen Zug machen
+      description: Macht einen zug.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Die ID des Spiels.
+          schema:
+            type: string
+        - name: playerId
+          in: path
+          required: true
+          description: Die ID des Spielers.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewMove"
+      responses:
+        "201":
+          description: Roboter erfolgreich erstellt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Move"
+        "400":
+          description: Ungültige Anfrage.
+      x-amazon-apigateway-integration:
+        uri: "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/{{postMoveFunctionArn}}/invocations"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        passthroughBehavior: "when_no_match"
+components:
+  schemas:
+    Robot:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Einzigartige Id des Roboters
+          example: 1234
+        name:
+          type: string
+          description: Name des Roboters
+          example: "Wall e"
+        health:
+          type: number
+          description: Leben des Roboters
+          example: 10
+        attackDamage:
+          type: number
+          description: Schaden des Roboters
+          example: 10
+        attackRange:
+          type: number
+          description: Angriffradius des Roboters
+          example: 10
+        movementRate:
+          type: number
+          description: Bewegungsradius des Roboters
+          example: 10
+      required:
+        - id
+        - name
+        - health
+        - attackDamage
+        - attackRange
+        - movementRate
+    NewRobot:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name des Roboters
+          example: "Wall e"
+        health:
+          type: number
+          description: Leben des Roboters
+          example: 10
+        attackDamage:
+          type: number
+          description: Schaden des Roboters
+          example: 10
+        attackRange:
+          type: number
+          description: Angriffradius des Roboters
+          example: 10
+        movementRate:
+          type: number
+          description: Bewegungsradius des Roboters
+          example: 10
+      required:
+        - name
+        - health
+        - attackDamage
+        - attackRange
+        - movementRate
+    NewGame:
+      type: object
+      properties:
+        mapId:
+          type: string
+          description: Die Map ID für die Auswahl der Karte
+          example: 1234
+      required:
+        - mapId
+    PlayerRobot:
+      type: object
+      properties:
+        playerId:
+          type: string
+          description: Einzigartige Id des Spielers
+          example: 1234
+        robotId:
+          type: string
+          description: Einzigartige Id des genutzten Roboters
+          example: 1234
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Einzigartige Id des Spiels
+          example: 1234
+        map:
+          type: string
+          description: Map Id
+          example: 1234
+        player:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlayerRobot"
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/Move"
+        status:
+          type: string
+          description: STARTED, INITIAL, END
+          enum:
+            - STARTED
+            - INITIAL
+            - END
+          example: STARTED
+      required:
+        - id
+        - map
+        - robots
+        - moves
+    JoinGame:
+      type: object
+      properties:
+        robotId:
+          type: string
+          description: Roboter ID
+          example: 1234
+    JoinGameResponse:
+      type: object
+      properties:
+        playerId:
+          type: string
+          description: Spieler ID
+          example: 1234
+    Map:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Einzigartige Id der Karte
+          example: 1234
+        mapSizeX:
+          type: number
+          description: Größe der X Achse
+          example: 1234
+        mapSize:
+          type: number
+          description: Größe Karte
+          example: 1234
+        mapItems:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: WALL, ROBOT, ITEM
+                enum:
+                  - WALL
+                  - ROBOT
+                  - ITEM
+                example: ROBOT
+              index:
+                type: number
+                description: Platz auf der Karte
+                example: 1
+      required:
+        - id
+        - mapSizeX
+        - mapSize
+        - mapItems
+    NewMove:
+      type: object
+      properties:
+        playerId:
+          type: string
+          description: Der Spieler , der seinen Roboter bewegt oder Aktionen durchführt
+          example: 1234
+        movementType:
+          $ref: "#/components/schemas/MovementType"
+        mapIndex:
+          type: number
+          description: Postion im Map Array
+          example: 1
+        align:
+          $ref: "#/components/schemas/Align"
+      required:
+        - playerId
+        - movementType
+        - mapIndex
+        - align
+    Move:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Die Move ID für den angelegten Move
+          example: 1234
+        playerId:
+          type: string
+          description: Der Spieler , der seinen Roboter bewegt oder Aktionen durchführt
+          example: 1234
+        movementType:
+          $ref: "#/components/schemas/MovementType"
+        align:
+          $ref: "#/components/schemas/Align"
+        mapIndex:
+          $ref: "#/components/schemas/MapIndex"
+      required:
+        - id
+        - playerId
+        - movementType
+        - mapIndex
+        - align
+    MapIndex:
+      type: number
+      description: Postion im Map Array
+      example: 1
+    Align:
+      type: string
+      description: N,S,E,W,NW,NE,SW,SE,
+      enum: [N, S, E, W, NW, NE, SW, SE]
+      example: N
+    MovementType:
+      type: string
+      description: ATTACK,MOVE,ALIGN,END
+      enum: [ATTACK, MOVE, ALIGN, END]
+      example: ATTACK
