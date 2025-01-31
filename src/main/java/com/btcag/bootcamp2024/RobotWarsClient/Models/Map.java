@@ -6,7 +6,7 @@ public class Map {
     private int width;
     private int height;
     private String id;
-    protected static int[][] map;
+    private int[][] map;
 
     public Map(int width, int height) {
         this.width = width;

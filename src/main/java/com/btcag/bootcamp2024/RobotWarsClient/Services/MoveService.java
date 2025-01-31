@@ -31,25 +31,32 @@ public class MoveService {
     }
 
     public Move makeMove(String gameId, String playerId, NewMove newMove) {
-       Optional <Robot> playerOpt = getRobotById(playerId);
-       Optional<Robot> targetOpt = getTargetByGameId(gameId);
+        Optional<Robot> playerOpt = getRobotById(playerId);
+        Optional<Robot> targetOpt = getTargetByGameId(gameId);
 
-        if (playerOpt.isEmpty()  || targetOpt.isEmpty()) {
+        if (playerOpt.isEmpty() || targetOpt.isEmpty()) {
             throw new IllegalArgumentException("Kein Spieler oder Ziel gefunden.");
         }
         Robot player = playerOpt.get();
         Robot target = targetOpt.get();
 
-        Move move = new Move(
-                IdGenerator.generateUniqueId(),
-                playerId,
-                gameId,
-                newMove.getMovementType(),
-                newMove.getDirections()
-        );
-        gameLogic.executeMove(player, target, move);
-        moves.add(move);
-        return move;
+        if (player instanceof GameRobot && target instanceof GameRobot) {
+            GameRobot gamePlayer = (GameRobot) player;
+            GameRobot gameTarget = (GameRobot) target;
+
+            Move move = new Move(
+                    IdGenerator.generateUniqueId(),
+                    playerId,
+                    gameId,
+                    newMove.getMovementType(),
+                    newMove.getDirections()
+            );
+            gameLogic.executeMove(gamePlayer, gameTarget, move);
+            moves.add(move);
+            return move;
+        } else {
+            throw new IllegalArgumentException("Spieler oder Ziel ist kein GameRobot.");
+        }
     }
 
     private Optional<Robot> getRobotById(String playerId) {

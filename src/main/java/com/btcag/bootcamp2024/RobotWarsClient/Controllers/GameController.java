@@ -74,7 +74,7 @@ public class GameController {
 
     @GetMapping("/games/{gameId}/map")
     public ResponseEntity<Map> getGameMap(@PathVariable String gameId) {
-        Optional<Map> gameOptional = gameList.stream().filter(game -> game.getId().equals(gameId)).findFirst();
+        Optional<Game> gameOptional = gameList.stream().filter(game -> game.getId().equals(gameId)).findFirst();
         if (gameOptional.isPresent()) {
             Game game = gameOptional.get();
             return ResponseEntity.ok(game.getMap());

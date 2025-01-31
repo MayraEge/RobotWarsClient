@@ -71,18 +71,17 @@ public class GameStarter implements CommandLineRunner {
         }
 
         // Erstelle ein neues Spiel über den GameController
-        Game newGame = new Game("", new Map(15, 10), 1);
+        Game newGame = new Game("", new Map(15, 10), 2);
         ResponseEntity<String> response = gameController.addGame(newGame);
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Neues Spiel wurde erstellt!");
         } else {
             System.out.println("Fehler beim Erstellen des Spiels: " + response.getBody());
         }
-
         AskSkillPointsView.display(player);
 
         // Spielmechanik und Anzeige des Spielfelds
-        startGame(player, newGame.getMap());
+        startGame(player, newGame.getMap().getMap());
     }
 
     private void joinExistingGame(Scanner scanner) {
@@ -103,7 +102,6 @@ public class GameStarter implements CommandLineRunner {
         } else {
             System.out.println("Fehler bei der Registrierung des Roboters.");
         }
-
         // Trete einem bestehenden Spiel über GameController bei
         ResponseEntity<String> response = gameController.joinGame(gameId, player.getName());
         if (response.getStatusCode().is2xxSuccessful()) {
@@ -111,14 +109,17 @@ public class GameStarter implements CommandLineRunner {
         } else {
             System.out.println("Fehler beim Beitreten des Spiels: " + response.getBody());
         }
-
         AskSkillPointsView.display(player);
-
         // Spielmechanik und Anzeige des Spielfelds
-        startGame(player, gameController.getGameMap(gameId));
+        ResponseEntity<Map> mapResponse = gameController.getGameMap(gameId);
+        if (mapResponse.getStatusCode().is2xxSuccessful()) {
+            startGame(player, mapResponse.getBody().getMap());
+        } else {
+            System.out.println("Fehler beim Abrufen der Spielkarte: " + mapResponse.getBody());
+        }
     }
 
-    private void startGame(GameRobot player, Map map) {
+    private void startGame(GameRobot player, int[][] map) {
         GameRobot target = new GameRobot("", "[O]", 1, 1, 1, 1, new Coordinates(0, 0, 15, 10), false, 9, 9);
         List<GameRobot> robots = new ArrayList<>();
         robots.add(player);
@@ -147,3 +148,4 @@ public class GameStarter implements CommandLineRunner {
         }
     }
 }
+

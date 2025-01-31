@@ -24,6 +24,9 @@ public class Game {
         public void setId(String id){
             this.id = id;
         }
+        public Map getMap(){
+        return map;
+        }
         public int getPlayers(){
         return players;
         }
