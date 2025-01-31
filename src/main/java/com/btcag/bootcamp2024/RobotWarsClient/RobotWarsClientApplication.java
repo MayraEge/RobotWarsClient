@@ -9,5 +9,4 @@ public class RobotWarsClientApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RobotWarsClientApplication.class, args);
 	}
-
 }

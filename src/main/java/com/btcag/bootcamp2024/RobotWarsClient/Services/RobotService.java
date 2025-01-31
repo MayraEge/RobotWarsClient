@@ -1,7 +1,7 @@
 package com.btcag.bootcamp2024.RobotWarsClient.Services;
 
 import com.btcag.bootcamp2024.RobotWarsClient.Enums.Directions;
-import com.btcag.bootcamp2024.RobotWarsClient.Models.Robot;
+import com.btcag.bootcamp2024.RobotWarsClient.Models.GameRobot;
 //hier methoden für die roboter
 
 public class RobotService {
@@ -18,7 +18,7 @@ public class RobotService {
             default -> Directions.NOMOVE;
         };
     }
-    public static boolean inRange(Robot player, Robot target) {
+    public static boolean inRange(GameRobot player, GameRobot target) {
         int dx = Math.abs(player.getX() - target.getX());
         int dy = Math.abs(player.getY() - target.getY());
         return dx <= player.getAttackRange() && dy <= player.getAttackRange();

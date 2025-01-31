@@ -15,13 +15,14 @@ import java.util.Optional;
 //in dieser Klasse fokus auf HTTP endpunkte/Client kommunikation
 
 @RestController
+@RequestMapping("/api")
 public class GameController {
     private List<Game> gameList = new ArrayList<>();
     private static final String api_url = ("https://82rvkz5o22.execute-api.eu-central-1.amazonaws.com/prod/");
-    private final HttpService httpService;
+    private final ApiService apiService;
 
-    public GameController(HttpService httpService){
-        this.httpService = httpService;
+    public GameController(ApiService apiService){
+        this.apiService = apiService;
     }
 
     @PostMapping("/api/maps/map/{id}")
@@ -35,7 +36,7 @@ public class GameController {
                     int y = item.getIndex() / mapData.getMapSizeX();
                     map.getMap()[x][y] = item.getType().equals("ROBOT") ? 1 : 2;
                 }
-                Game game = new Game(mapData.getId(), "GameID", map, 2);
+                Game game = new Game(mapData.getId(), map,2);
                 gameList.add(game);
             }
             return ResponseEntity.status(HttpStatus.CREATED).body("Map erfolgreich hinzugefügt!!");
@@ -45,25 +46,21 @@ public class GameController {
         }
     }
 
-    @PostMapping("/api/games/game")
+    @PostMapping("/games/game")
     public ResponseEntity<String> addGame(@RequestBody Game game) {
         if (game != null) {
             gameList.add(game);
-            String jsonInputString = String.format("{\"name\": \"%s\", \"players\": %d}",
-                    game.getName(), game.getPlayers());
-            String url = api_url + "api/games/game";
-
-            String response = httpService.sendPostRequest(url, jsonInputString);
+            String response = apiService.registerGame(game);
             if (response != null) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Spiel erfolgreich erstellt!!");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ungültiges Spiel wird nicht erstellt.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Spiel wurde nicht erstellt.");
             }
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler: Spiel konnte nicht erstellt werden. ");
         }
     }
-    @PostMapping("/api/games/{gameId}/join")
+    @PostMapping("/games/{gameId}/join")
     public ResponseEntity<String> joinGame(@PathVariable String gameId, @RequestParam String playerName) {
         Optional<Game> gameOptional = gameList.stream().filter(game -> game.getId().equals(gameId)).findFirst();
         if (gameOptional.isPresent()) {
@@ -74,17 +71,27 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Spiel wurde nicht gefunden.");
         }
     }
-    @GetMapping("/api/server/status")
+
+    @GetMapping("/games/{gameId}/map")
+    public ResponseEntity<Map> getGameMap(@PathVariable String gameId) {
+        Optional<Map> gameOptional = gameList.stream().filter(game -> game.getId().equals(gameId)).findFirst();
+        if (gameOptional.isPresent()) {
+            Game game = gameOptional.get();
+            return ResponseEntity.ok(game.getMap());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/server/status")
     public ResponseEntity<String> checkServerStatus() {
         String url = api_url + "status";
-        String response = httpService.sendGetRequest(url);
+        String response = apiService.checkServerStatus();
         if (response != null && response.contains("OK")) {
             return ResponseEntity.ok("Verbindung zum Server erfolgreich!");
         } else {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Keine Verbindung zum Server.");
         }
     }
-
-
 }
 

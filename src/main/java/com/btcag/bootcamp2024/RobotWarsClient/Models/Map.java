@@ -66,7 +66,7 @@ public class Map {
         }
     }
 
-    public static boolean validTurn(Directions direction, Robot player) {
+    public static boolean validTurn(Directions direction, GameRobot player) {
         switch (direction) {
             case SOUTH:
                 return isValidMove(player.getY() + 1, 9);

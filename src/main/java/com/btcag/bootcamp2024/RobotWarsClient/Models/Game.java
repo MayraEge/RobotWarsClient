@@ -1,19 +1,19 @@
 package com.btcag.bootcamp2024.RobotWarsClient.Models;
 
+import com.btcag.bootcamp2024.RobotWarsClient.Controllers.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
     private String id;
-    private String name;
     private Map map;
     private int players;
     private List<String> playerNames;
     private String mapId;
 
-    public Game(String id, String name, Map map, int players) {
+    public Game(String id, Map map, int players) {
         this.id = id;
-        this.name = name;
         this.map = map;
         this.players = players;
         this.playerNames = new ArrayList<>();
@@ -23,12 +23,6 @@ public class Game {
         }
         public void setId(String id){
             this.id = id;
-        }
-        public String getName() {
-            return name;
-        }
-        public void setName(String name) {
-            this.name = name;
         }
         public int getPlayers(){
         return players;

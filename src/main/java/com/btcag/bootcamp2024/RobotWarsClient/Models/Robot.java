@@ -3,25 +3,19 @@ package com.btcag.bootcamp2024.RobotWarsClient.Models;
 public class Robot {
     private String id;
     private String name;
-    private Coordinates coordinates;
     private int health;
     private int movementRate;
     private int attackDamage;
     private int attackRange;
-    private boolean knockedOut;
-    private int x;
-    private int y;
 
-    public Robot(String id, String name, int health, int movementRange, int attackDamage, int attackRange, boolean knockedOut) {
+
+    public Robot(String id, String name, int health, int movementRange, int attackDamage, int attackRange) {
         this.id = id;
         this.name = name;
         this.health = health;
         this.movementRate = movementRange;
         this.attackDamage = attackDamage;
         this.attackRange = attackRange;
-        this.knockedOut = knockedOut;
-        this.x = x;
-        this.y = y;
     }
 
     public String getId(){
@@ -55,14 +49,6 @@ public class Robot {
         this.attackDamage = attackDamage;
     }
 
-    public boolean isKnockedOut() {
-        return knockedOut;
-    }
-
-    public void setKnockedOut(boolean knockedOut) {
-        this.knockedOut = knockedOut;
-    }
-
     public int getHealth() {
         return health;
     }
@@ -78,34 +64,6 @@ public class Robot {
     public void setMovementRange(int movementRange) {
         this.movementRate = movementRange;
     }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public int calculatePosition() {
-        return coordinates.calculatePosition();
-    }
-    public int getX(){
-        return x;
-    }
-
-    public void setX(int x){
-        this.x = x;
-    }
-
-    public int getY(){
-        return y;
-    }
-
-    public void setY(int y){
-        this.y = y;
-    }
-
 
     public static void attack(Robot player, Robot target) {
         target.setHealth(target.getHealth() - player.getAttackDamage());

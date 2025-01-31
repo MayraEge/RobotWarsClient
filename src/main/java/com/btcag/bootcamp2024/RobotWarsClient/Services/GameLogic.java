@@ -6,7 +6,7 @@ import com.btcag.bootcamp2024.RobotWarsClient.Models.*;
 //hier logik für ausführen v bewegungen
 
 public class GameLogic {
-    public void executeMove(Robot player, Robot target, Move move){
+    public void executeMove(GameRobot player, GameRobot target, Move move){
         switch (move.getMovementType()){
             case MOVE:
                 moveRobot(player, move.getDirections());
@@ -22,7 +22,7 @@ public class GameLogic {
                 break;
         }
     }
-    private void moveRobot(Robot player, Directions directions){
+    private void moveRobot(GameRobot player, Directions directions){
         if(Map.validTurn(directions,  player)) {
             player.setX(player.getX() + directions.getX());
             player.setY(player.getY() + directions.getY());
@@ -30,7 +30,7 @@ public class GameLogic {
             System.out.println("Ungültiger Zug. ");
         }
     }
-    private void attack(Robot player, Robot target){
+    private void attack(GameRobot player, GameRobot target){
         if (RobotService.inRange(player, target)){
             Robot.attack(player, target);
         }

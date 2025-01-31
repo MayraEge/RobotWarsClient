@@ -1,11 +1,10 @@
 package com.btcag.bootcamp2024.RobotWarsClient.Views;
-import com.btcag.bootcamp2024.RobotWarsClient.Models.Map;
-import com.btcag.bootcamp2024.RobotWarsClient.Models.Robot;
+import com.btcag.bootcamp2024.RobotWarsClient.Models.*;
 
 import java.util.List;
 
 public class BattlefieldView {
-    public static void display(List<Robot> robots, Map map) {
+    public static void display(List<GameRobot> robots, Map map) {
         for (int y = 0; y < map.getHeight(); y++) {
             for (int x = 0; x < map.getWidth(); x++) {
                 if (x == robots.get(0).getX() && y == robots.get(0).getY()) {
