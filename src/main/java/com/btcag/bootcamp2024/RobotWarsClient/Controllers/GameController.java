@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class GameController {
     private List<Game> gameList = new ArrayList<>();
-    private static final String api_url = ("https://82rvkz5o22.execute-api.eu-central-1.amazonaws.com/prod/");
+    private static final String api_url = ("https://eumth8x973.execute-api.eu-central-1.amazonaws.com/prod/");
     private final ApiService apiService;
 
     public GameController(ApiService apiService){
