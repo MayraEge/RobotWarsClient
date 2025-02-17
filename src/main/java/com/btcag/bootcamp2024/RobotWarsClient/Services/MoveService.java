@@ -45,7 +45,6 @@ public class MoveService {
             GameRobot gameTarget = (GameRobot) target;
 
             Move move = new Move(
-                    IdGenerator.generateUniqueId(),
                     playerId,
                     gameId,
                     newMove.getMovementType(),

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 //in dieser Klasse fokus auf HTTP endpunkte/Client kommunikation
 
@@ -18,14 +19,19 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class GameController {
     private List<Game> gameList = new ArrayList<>();
-    private static final String api_url = ("https://eumth8x973.execute-api.eu-central-1.amazonaws.com/prod/");
+    private static final String api_url = ("https://eumth8x973.execute-api.eu-central-1.amazonaws.com/prod");
     private final ApiService apiService;
 
     public GameController(ApiService apiService){
         this.apiService = apiService;
     }
 
-    @PostMapping("/api/maps/map/{id}")
+    @GetMapping("/api")
+    public String getplayerId(){
+        return UUID.randomUUID().toString();
+    }
+
+    @PostMapping("/maps/map/{id}")
     public ResponseEntity<String> addMap(@RequestBody String json) {
         try {
             MapData[] mapDataArray = JsonParser.parseMapData(json);

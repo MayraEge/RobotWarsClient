@@ -9,7 +9,7 @@ public class Move {
     private Directions directions;
     private MovementType movementType;
 
-    public Move(String id, String playerId, String gameId, MovementType movementType,  Directions directions){
+    public Move(String id, String playerId, MovementType movementType, Directions directions){
         this.id = id;
         this.playerId = playerId;
         this.gameId = gameId;
