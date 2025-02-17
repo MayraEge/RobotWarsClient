@@ -79,6 +79,5 @@ public class HttpService {
         String response = sendGetRequest(apiUrl + "status");
         return response != null && response.contains("OK");
     }
-
 }
 

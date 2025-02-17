@@ -2,8 +2,15 @@ package com.btcag.bootcamp2024.RobotWarsClient.Services;
 
 import com.btcag.bootcamp2024.RobotWarsClient.Models.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
+
+import java.util.List;
 
 @Service
 public class ApiService {
@@ -15,6 +22,18 @@ public class ApiService {
     public ApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+
+    public List<Robot> getAllRobots() {
+        String url = String.format("%s/api/robots", apiUrl);
+        ResponseEntity<List<Robot>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Robot>>() {}
+        );
+        return response.getBody();
+    }
+
     public Robot getRobotById(String robotId) {
         String url = String.format("%s/robots/%s", apiUrl, robotId);
         return restTemplate.getForObject(url, Robot.class);
@@ -29,6 +48,14 @@ public class ApiService {
     }
     public String checkServerStatus() {
         String url = String.format("%s/status", apiUrl);
-        return restTemplate.getForObject(url, String.class);
+        try {
+            return restTemplate.getForObject(url, String.class);
+        } catch (HttpClientErrorException e) {
+            System.err.println("HTTP Error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw e;
+        } catch (RestClientException e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
     }
 }
